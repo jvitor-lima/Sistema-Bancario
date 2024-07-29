@@ -25,3 +25,30 @@ O projeto é composto pelos seguintes arquivos:
 2. Certifique-se de ter o Python instalado.
 3. Navegue até o diretório do projeto no terminal.
 4. Execute o script `main.py` para iniciar o sistema bancário:
+
+## Testes
+
+Para executar os testes automatizados, execute o seguinte comando no terminal:
+`python test_sistema.py`
+
+## Dependencias
+
+Este projeto não possui dependencias externas além do Python padrão
+
+## Contribuintes
+
+° Vitor Lima
+
+° Rodrigo Santos
+
+## Licença
+
+Este projeto está licenciado sob a MIT License.
+
+## Contatos
+
+Para mais informações, entre em contato com os contribuindores:
+
+° Vitor Lima: josevitoroff@gmail.com
+
+° Rodrigo Santos: rds.beserra@gmail.com
