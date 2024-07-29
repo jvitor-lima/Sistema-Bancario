@@ -24,3 +24,4 @@ class Usuario:
 
     def __str__(self):
         return f'Nome: {self.nome}, Email: {self.email}'
+    
