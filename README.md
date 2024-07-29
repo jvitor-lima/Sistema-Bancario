@@ -37,9 +37,9 @@ Este projeto não possui dependencias externas além do Python padrão
 
 ## Contribuintes
 
-° Vitor Lima
+- Vitor Lima
 
-° Rodrigo Santos
+- Rodrigo Santos
 
 ## Licença
 
@@ -49,6 +49,6 @@ Este projeto está licenciado sob a MIT License.
 
 Para mais informações, entre em contato com os contribuindores:
 
-° Vitor Lima: josevitoroff@gmail.com
+- Vitor Lima: josevitoroff@gmail.com
 
-° Rodrigo Santos: rds.beserra@gmail.com
+- Rodrigo Santos: rds.beserra@gmail.com
