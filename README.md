@@ -14,10 +14,13 @@ Este é um sistema bancário simples, desenvolvido em Python, que permite criar 
 
 O projeto é composto pelos seguintes arquivos:
 
-- `main.py`: Arquivo principal que contém o menu de interação com o usuário e a lógica de carregamento e salvamento de dados.
-- `usuario.py`: Define a classe `Usuario` e suas funcionalidades.
+- `app.py`: 
 - `conta.py`: Define a classe `Conta` e suas funcionalidades.
+- `main.py`: Arquivo principal que contém o menu de interação com o usuário e a lógica de carregamento e salvamento de dados.
+- `README.md`: Este arquivo
+- `requirements.txt`:  Arquivo com as dependências o fastapi e o uvicorn
 - `test_sistema.py`: Arquivo de testes automatizados para verificar o funcionamento do sistema.
+- `usuario.py`: Define a classe `Usuario` e suas funcionalidades.
 
 ## Como Executar
 
@@ -33,7 +36,7 @@ Para executar os testes automatizados, execute o seguinte comando no terminal:
 
 ## Dependencias
 
-Este projeto não possui dependencias externas além do Python padrão
+Este projeto possui dependencias fastapi e uvicorn
 
 ## Contribuintes
 
