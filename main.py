@@ -102,7 +102,6 @@ def Menu():
         print("4. Ver saldo")
         print("5. Ver histórico de transações")
         print("6. Logout")
-        print("7. Sair")
         opcao = int(input("Escolha uma opção: "))
 
         if opcao == 1:
