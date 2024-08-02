@@ -14,7 +14,7 @@ Este é um sistema bancário simples, desenvolvido em Python, que permite criar 
 
 O projeto é composto pelos seguintes arquivos:
 
-- `app.py`: 
+- `app.py`: Este arquivo é o ponto de entrada do aplicativo FastAPI.
 - `conta.py`: Define a classe `Conta` e suas funcionalidades.
 - `main.py`: Arquivo principal que contém o menu de interação com o usuário e a lógica de carregamento e salvamento de dados.
 - `README.md`: Este arquivo
