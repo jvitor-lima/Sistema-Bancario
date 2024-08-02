@@ -1,4 +1,4 @@
-import jason
+import json
 from usuario import Usuario
 from conta import Conta, transferir
 # Lista de contas e usuários para armazenar todos os dados criados
@@ -26,7 +26,7 @@ def carregar_dados():
 def salvar_dados():
     with open('usuarios.json', 'w') as f:
         usuarios_data = [{'Nome': u.get.nome(), 'E-mail': u.get.email(), 'Senha': u.get.senha()} for u in usuarios]
-        jason.dump(usuarios_data, f)
+        json.dump(usuarios_data, f)
     with open('contas.json', 'w') as f:
         contas_data = [{
             'numero': c.numero,
@@ -70,7 +70,7 @@ def autenticar_usuario():
     return None
 
 
-def Mwnu():
+def Menu():
     carregar_dados()
     usuario_autenticado = None
     while True:
@@ -142,4 +142,4 @@ def Mwnu():
             print("Opção inválida. Tente novamente!")
 
 if __name__ == "__main__":
-    menu()
+    Menu()
