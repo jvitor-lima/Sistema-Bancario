@@ -8,7 +8,7 @@ import json
 app = FastAPI()
 
 contas = []
-usuario = []
+usuarios = []
 
 def carregar_dados():
     try:
