@@ -27,7 +27,7 @@ def salvar_dados():
     with open('usuarios.json', 'w') as f:
         usuarios_data = [{'Nome': u.get.nome(), 'E-mail': u.get.email(), 'Senha': u.get.senha()} for u in usuarios]
         jason.dump(usuarios_data, f)
-     with open('contas.json', 'w') as f:
+    with open('contas.json', 'w') as f:
         contas_data = [{
             'numero': c.numero,
             'usuario': {'nome': c.usuario.get_nome(), 'email': c.usuario.get_email(), 'senha': c.usuario.get_senha()},
@@ -91,6 +91,8 @@ def Mwnu():
             break
         else:
             print("Opção inválida. Tente novamente")
+
+    
     else:
         print(f"\nBem-vindo, {usuario_autenticado.get_nome()}!")
         print("\n----- Menu -----")
@@ -105,11 +107,11 @@ def Mwnu():
 
         if opcao == 1:
             conta = encontrar_conta()
-            if conta and conta_usuario = usuario_autenticado:
+            if conta and conta_usuario == usuario_autenticado:
                 valor = float(input("Digite o valor para depositar: "))
                 conta.depositar(valor)
         elif opcao == 2:
-            if conta and conta_usuario = usuario_autenticado:
+            if conta and conta_usuario == usuario_autenticado:
                 valor = float(input("Digite o valor para sacar: "))
                 canta.sacar(valor)
 
@@ -123,12 +125,12 @@ def Mwnu():
 
         elif opcao == 4:
             conta = encontrar_conta()
-            if conta and conta_usuario = usuario_autenticado:
+            if conta and conta_usuario == usuario_autenticado:
                 print(f"Saldo: R${conta.get_saldo():.2f}")
 
         elif opcao == 5:
             conta = encontrar_conta()
-            if conta and conta_usuario = usuario_ autenticado:
+            if conta and conta_usuario == usuario_autenticado:
                 for transacao in conta.get_transacoes():
                     print(transacao)
             
@@ -136,11 +138,8 @@ def Mwnu():
             print("Logout realizado com sucesso!!!")
             usuario_autenticado = None
 
-        elif opcao == 7:
-            print("Saindo...")
-            break
         else:
             print("Opção inválida. Tente novamente!")
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     menu()
