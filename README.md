@@ -34,6 +34,20 @@ O projeto é composto pelos seguintes arquivos:
 Para executar os testes automatizados, execute o seguinte comando no terminal:
 `python test_sistema.py`
 
+## Executando API
+Para rodar a API,execute o comando abaixo no terminal
+`uvicorn app:app --reload`
+A API estará disponível no endereço `http://127.0.0.1:8000`.
+
+## Requisições de teste
+Você pode testar os endpoints da API usando o `curl`
+comando pra criar usuário: `curl -X POST -H "Content-Type: application/json" -d '{"nome": "Vitor", "email": "Vitor@gmail.com", "senha": "senha1234"}' http://127.0.0.1:8000/usuarios`
+comando para criar conta: `curl -X POST -H "Content-Type: application/json" -d '{"email": "Vitor@gmail.com", "saldo_inicial": 1000.0}' http://127.0.0.1:8000/contas`
+comando para obter detalhes de uma conta: `curl -X GET http://127.0.0.1:8000/contas/10`
+comando para depositar: `curl -X POST -H "Content-Type: application/json" -d '{"valor": 500.0}' http://127.0.0.1:8000/contas/10/depositar`
+comando para sacar: `curl -X POST -H "Content-Type: application/json" -d '{"valor": 200.0}' http://127.0.0.1:8000/contas/10/sacar`
+comando para transferir: `curl -X POST -H "Content-Type: application/json" -d '{"conta_origem": 10, "conta_destino": 20, "valor": 100.0}' http://127.0.0.1:8000/contas/transferir`
+
 ## Dependencias
 
 Este projeto possui dependencias fastapi e uvicorn
