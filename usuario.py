@@ -22,6 +22,7 @@ class Usuario:
         else:
             raise ValueError("Senha deve ter pelo menos 8 caracteres")
 
+
     def get_nome(self):
         return self.nome
 
