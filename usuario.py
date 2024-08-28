@@ -15,8 +15,8 @@ class Usuario:
             self.email = email
         else:
             raise ValueError("E-mail inválido")
-
-    def get_senha(self):
+   
+    def set_senha(self, senha):
         if len(senha) >= 8:
             self.senha = senha
         else:
