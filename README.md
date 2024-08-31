@@ -51,7 +51,7 @@ comando para transferir: `curl -X POST "http://127.0.0.1:8000/contas/transferir"
 
 ## Dependencias
 
-Este projeto possui dependencias fastapi e uvicorn
+As dependencias são fastapi e uvicorn
 
 ## Contribuintes
 
