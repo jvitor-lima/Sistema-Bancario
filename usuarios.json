@@ -1,0 +1,57 @@
+[
+    {
+        "nome": "Rodrigo",
+        "email": "Rodrigo@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Vitor",
+        "email": "vitor@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Ana",
+        "email": "ana@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Lucas",
+        "email": "lucas@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Mariana",
+        "email": "mariana@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Pedro",
+        "email": "pedro@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Fernanda",
+        "email": "fernanda@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Roberto",
+        "email": "roberto@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Camila",
+        "email": "camila@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Carlos",
+        "email": "carlos@gmail.com",
+        "senha": "senha1234"
+    },
+    {
+        "nome": "Juliana",
+        "email": "juliana@gmail.com",
+        "senha": "senha1234"
+    }
+]

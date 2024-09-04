@@ -3,29 +3,58 @@ from pydantic import BaseModel
 from usuario import Usuario
 from conta import Conta, transferir
 import json
-
+import os
 
 app = FastAPI()
 
 contas = []
 usuarios = []
+import os
 
 def carregar_dados():
     try:
-        with open('usuario.json', 'r') as f:
+        with open('usuarios.json', 'r') as f:
             usuarios_data = json.load(f)
             for usuario in usuarios_data:
                 usuarios.append(Usuario(usuario['nome'], usuario['email'], usuario['senha']))
+
+    except FileNotFoundError:
+        print("Arquivo 'usuarios.json' não encontrado.")
+        return
+
+    except json.JSONDecodeError as e:
+        print(f"Erro ao decodificar JSON no arquivo 'usuarios.json': {e}")
+        return
+
+    try:
         with open('contas.json', 'r') as f:
             contas_data = json.load(f)
             for conta in contas_data:
-                usuario = next(u for u in usuarios if u.get_email() == conta['usuario']['email'])
+                email_conta = conta['usuario']['email'].strip().lower()  # Normalizando o e-mail aqui também
+                usuario = next((u for u in usuarios if u.get_email() == email_conta), None)
+                
+                if usuario is None:
+                    print(f"Usuário com e-mail {email_conta} não encontrado. Ignorando esta conta.")
+                    continue
+            
                 nova_conta = Conta(usuario, conta['saldo'])
                 nova_conta.numero = conta['numero']
                 nova_conta.transacoes = conta['transacoes']
                 contas.append(nova_conta)
+
     except FileNotFoundError:
-        pass
+        print("Arquivo 'contas.json' não encontrado.")
+
+    except json.JSONDecodeError as e:
+        print(f"Erro ao decodificar JSON no arquivo 'contas.json': {e}")
+
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+
+
+
+
+carregar_dados()
 
 def salvar_dados():
     with open('usuarios.json', 'w') as f:
@@ -40,7 +69,7 @@ def salvar_dados():
         } for c in contas]
         json.dump(contas_data, f)
 
-carregar_dados()
+
 
 class UsuarioModel(BaseModel):
     nome: str
@@ -59,6 +88,13 @@ class TransferenciaModel(BaseModel):
     conta_destino: int
     valor: float
 
+
+# @app.get("/hello world")
+# async def root():
+#     return {"message": "Hello World"}
+
+
+
 @app.post("/usuarios")
 def criar_usuario(usuario: UsuarioModel):
     try:
@@ -68,6 +104,7 @@ def criar_usuario(usuario: UsuarioModel):
         return {"mensagem": "Usuário criado com sucesso!"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.post("/contas")
 def criar_conta(conta: ContaModel):
@@ -79,6 +116,7 @@ def criar_conta(conta: ContaModel):
         return {"mensagem": "Conta criada com sucesso!", "numero_conta": nova_conta.numero}
     else:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
 
 @app.get("/contas/{numero}")
 def obter_conta(numero: int):
@@ -92,6 +130,7 @@ def obter_conta(numero: int):
         }
     else:
         raise HTTPException(status_code=404, detail="Conta não encontrada")
+
 
 @app.post("/contas/{numero}/depositar")
 def depositar(numero: int, transacao: TransacaoModel):
@@ -113,6 +152,7 @@ def sacar(numero: int, transacao: TransacaoModel):
     else:
         raise HTTPException(status_code=404, detail="Conta não encontrada")
 
+
 @app.post("/contas/transferir")
 def realizar_transferencia(transferencia: TransferenciaModel):
     conta_origem = next((c for c in contas if c.numero == transferencia.conta_origem), None)
@@ -124,6 +164,73 @@ def realizar_transferencia(transferencia: TransferenciaModel):
     else:
         raise HTTPException(status_code=404, detail="Conta de origem ou destino não encontrada")
 
+
+@app.put("/usuarios/{email}")
+def atualizar_usuario(email: str, usuario: UsuarioModel):
+    usuario_existente = next((u for u in usuarios if u.get_email() == email), None)
+    if usuario_existente:
+        usuario_existente.set_nome(usuario.nome)
+        usuario_existente.set_email(usuario.email)
+        usuario_existente.set_senha(usuario.senha)
+        salvar_dados()
+        return {"mensagem": "Usuário atualizado com sucesso!"}
+    else:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+
+@app.put("/contas/{numero}")
+def atualizar_conta(numero: int, conta: ContaModel):
+    conta_existente = next((c for c in contas if c.numero == numero), None)
+    if conta_existente:
+        conta_existente.usuario = next((u for u in usuarios if u.get_email() == conta.email), conta_existente.usuario)
+        conta_existente.saldo = conta.saldo_inicial
+        salvar_dados()
+        return {"mensagem": "Conta atualizada com sucesso!"}
+    else:
+        raise HTTPException(status_code=404, detail="Conta não encontrada")
+    
+
+@app.delete("/usuarios/{email}")
+def deletar_usuario(email: str):
+    global usuarios
+    usuarios = [u for u in usuarios if u.get_email() != email]
+    salvar_dados()
+    return {"mensagem": "Usuário deletado com sucesso!"}
+
+
+@app.delete("/contas/{numero}")
+def deletar_conta(numero: int):
+    global contas
+    contas = [c for c in contas if c.numero != numero]
+    salvar_dados()
+    return {"mensagem": "Conta deletada com sucesso!"}
+
+
+@app.get("/usuarios")
+def listar_usuarios():
+    return [
+        {
+            "nome": usuario.get_nome(),
+            "email": usuario.get_email(),
+        }
+        for usuario in usuarios
+    ]
+
+@app.get("/contas")
+def listar_contas():
+    print("Contas disponíveis:", contas)
+    return [
+        {
+            "numero": conta.numero,
+            "usuario": conta.usuario.get_nome(),
+            "saldo": conta.get_saldo()
+        }
+        for conta in contas
+    ]
+# print("Diretório de trabalho atual:", os.getcwd())
+
+
+
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)

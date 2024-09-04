@@ -3,7 +3,7 @@ import re
 class Usuario:
     def __init__(self, nome, email, senha):
         self.set_nome(nome)
-        self.set_email(email)
+        self.email = email.strip().lower()  
         self.set_senha(senha)
 
 
