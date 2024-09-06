@@ -1,72 +1,56 @@
-# Sistema Bancário
+# Sistema Bancário em FastAPI
 
-Este é um sistema bancário simples, desenvolvido em Python, que permite criar usuários e contas, realizar depósitos, saques, transferências e verificar o saldo e o histórico de transações. Os dados dos usuários e das contas são armazenados localmente em arquivos JSON.
+Este é um sistema bancário básico usando FastAPI e SQLite.
 
-## Funcionalidades
+## Instalação
 
-- Criação de usuários e contas bancárias.
-- Autenticação de usuários.
-- Depósitos, saques e transferências entre contas.
-- Visualização de saldo e histórico de transações.
-- Persistência de dados em arquivos JSON.
+1. **Clone o repositório:**
 
-## Estrutura do Projeto
+    ```bash
+    git clone https://github.com/seu-usuario/seu-repositorio.git
+    cd seu-repositorio
+    ```
 
-O projeto é composto pelos seguintes arquivos:
+2. **Crie e ative um ambiente virtual:**
 
-- `app.py`: Este arquivo é o ponto de entrada do aplicativo FastAPI.
-- `conta.py`: Define a classe `Conta` e suas funcionalidades.
-- `main.py`: Arquivo principal que contém o menu de interação com o usuário e a lógica de carregamento e salvamento de dados.
-- `README.md`: Este arquivo
-- `requirements.txt`:  Arquivo com as dependências o fastapi e o uvicorn
-- `test_sistema.py`: Arquivo de testes automatizados para verificar o funcionamento do sistema.
-- `usuario.py`: Define a classe `Usuario` e suas funcionalidades.
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # No Windows, use: venv\Scripts\activate
+    ```
 
-## Como Executar
+3. **Instale as dependências:**
 
-1. Clone o repositório para sua máquina local.
-2. Certifique-se de ter o Python instalado.
-3. Navegue até o diretório do projeto no terminal.
-4. Execute o script `main.py` para iniciar o sistema bancário:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-## Testes
+4. **Inicialize o banco de dados:**
 
-Para executar os testes automatizados, execute o seguinte comando no terminal:
-`python test_sistema.py`
+    ```bash
+    python -c "import database; database.inicializar_bd()"
+    ```
 
-## Executando API
-Para rodar a API,execute o comando abaixo no terminal
-`uvicorn app:app --reload`
-A API estará disponível no endereço `http://127.0.0.1:8000`.
+## Uso
 
-## Requisições de teste
-Você pode testar os endpoints da API usando o `curl`
-comando pra criar usuário: `curl -X POST "http://localhost:8000/usuarios" -H "Content-Type: application/json" -d "{\"nome\": \"Vitor\", \"email\": \"Vitor@gmail.com\", \"senha\": \"senha1234\"}"`
-comando para criar conta: `curl -X POST -H "Content-Type: application/json" -d '{"email": "Vitor@gmail.com", "saldo_inicial": 1000.0}' http://127.0.0.1:8000/contas`
-comando para obter detalhes de uma conta: `curl -X GET "http://127.0.0.1:8000/contas/10`
+1. **Inicie o servidor:**
 
-comando para depositar: `curl -X POST "http://127.0.0.1:8000/contas/10/depositar" -H "Content-Type: application/json" -d "{\"valor\": 500.0}"`
-comando para sacar: `curl -X POST "http://127.0.0.1:8000/contas/10/sacar" -H "Content-Type: application/json" -d "{\"valor\": 200.0}"`
-comando para transferir: `curl -X POST "http://127.0.0.1:8000/contas/transferir" -H "Content-Type: application/json" -d "{\"conta_origem\": 10, \"conta_destino\": 20, \"valor\": 100.0}"`
+    ```bash
+    uvicorn app:app --reload
+    ```
 
-## Dependencias
+2. **Acesse a API em:** [http://localhost:8000](http://localhost:8000)
 
-As dependencias são fastapi e uvicorn
+## Endpoints
 
-## Contribuintes
-
-- Vitor Lima
-
-- Rodrigo Santos
-
-## Licença
-
-Este projeto está licenciado sob a MIT License.
-
-## Contatos
-
-Para mais informações, entre em contato com os contribuindores:
-
-- Vitor Lima: josevitoroff@gmail.com
-
-- Rodrigo Santos: rds.beserra@gmail.com
+- `POST /usuarios`: Criar um usuário
+- `POST /contas`: Criar uma conta
+- `GET /contas/{numero}`: Obter detalhes da conta
+- `POST /contas/{numero}/depositar`: Depositar em uma conta
+- `POST /contas/{numero}/sacar`: Sacar de uma conta
+- `POST /contas/transferir`: Transferir entre contas
+- `PUT /usuarios/{email}`: Atualizar um usuário
+- `PUT /contas/{numero}`: Atualizar uma conta
+- `DELETE /usuarios/{email}`: Deletar um usuário
+- `DELETE /contas/{numero}`: Deletar uma conta
+- `GET /usuarios`: Listar todos os usuários
+- `GET /contas`: Listar todas as contas
