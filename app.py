@@ -5,7 +5,6 @@ import database
 
 app = FastAPI()
 
-# Modelos Pydantic
 class UsuarioModel(BaseModel):
     nome: str
     email: str
@@ -23,7 +22,6 @@ class TransferenciaModel(BaseModel):
     conta_destino: int
     valor: float
 
-# Funções auxiliares
 def get_usuario_by_email(email: str):
     conn = database.get_connection()
     cursor = conn.cursor()
@@ -115,7 +113,6 @@ def obter_conta(numero: int):
             "numero": conta[0],
             "usuario_id": conta[1],
             "saldo": conta[2],
-            # Aqui você pode adicionar transações se estiver implementado
         }
     else:
         raise HTTPException(status_code=404, detail="Conta não encontrada")

@@ -1,6 +1,5 @@
 import sqlite3
 
-# Nome do banco de dados
 DB_NAME = "banco.db"
 
 def get_connection():
@@ -36,7 +35,7 @@ def inicializar_bd():
     )
     """)
 
-    # Criação da tabela de transações (adicionado, já que você mencionou)
+    # Criação da tabela de transações 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS transacoes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
