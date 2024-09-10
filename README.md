@@ -7,15 +7,14 @@ Este é um sistema bancário básico usando FastAPI e SQLite.
 1. **Clone o repositório:**
 
     ```bash
-    git clone https://github.com/seu-usuario/seu-repositorio.git
-    cd seu-repositorio
+    git clone https://github.com/jvitor-lima/Sistema-Bancario
     ```
 
 2. **Crie e ative um ambiente virtual:**
 
     ```bash
     python -m venv venv
-    source venv/bin/activate  # No Windows, use: venv\Scripts\activate
+
     ```
 
 3. **Instale as dependências:**
