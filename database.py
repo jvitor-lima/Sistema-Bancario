@@ -3,19 +3,13 @@ import sqlite3
 DB_NAME = "banco.db"
 
 def get_connection():
-    """
-    Retorna uma conexão com o banco de dados SQLite.
-    """
     return sqlite3.connect(DB_NAME)
 
 def inicializar_bd():
-    """
-    Cria as tabelas necessárias no banco de dados, se não existirem.
-    """
+ 
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Criação da tabela de usuários
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +19,6 @@ def inicializar_bd():
     )
     """)
 
-    # Criação da tabela de contas
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS contas (
         numero INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +28,6 @@ def inicializar_bd():
     )
     """)
 
-    # Criação da tabela de transações 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS transacoes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
