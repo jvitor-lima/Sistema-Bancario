@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
+import requests
 import database
 
 app = FastAPI()
+dolar = "https://economia.awesomeapi.com.br/json/last/USD-BRL"
 
 class UsuarioModel(BaseModel):
     nome: str
@@ -216,3 +217,21 @@ def listar_contas():
     contas = cursor.fetchall()
     conn.close()
     return [{"numero": conta[0], "usuario_id": conta[1], "saldo": conta[2]} for conta in contas]
+
+
+
+@app.get("/cotacaoDolar")
+def listar_dolar():
+    response = requests.get(dolar)
+
+    if response.status_code == 200:
+        data = response.json()
+        cotacao_dolar = data["USDBRL"]
+        
+        return {
+            "nome": cotacao_dolar["name"],
+            "compra": cotacao_dolar["bid"],
+            "venda": cotacao_dolar["ask"],
+        }
+    else:
+        return {"erro": "Falha ao consultar a cotação do dólar"}
