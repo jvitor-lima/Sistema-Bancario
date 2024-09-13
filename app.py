@@ -1,224 +1,49 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import requests
-import database
+from Usuario import Usuario
+from ContaBancaria import ContaBancaria
+from Transferencia import Transferencia
+from database import inicializar_bd
 
 app = FastAPI()
 dolar = "https://economia.awesomeapi.com.br/json/last/USD-BRL"
 
-class UsuarioModel(BaseModel):
-    nome: str
-    email: str
-    senha: str
+@app.post("/usuarios/")
+async def criar_usuario(nome: str, cpf: str, email: str, senha: str):
+    Usuario.criar_usuario(nome, cpf, email, senha)
+    return {"status": "Usuário criado com sucesso"}
 
-class ContaModel(BaseModel):
-    email: str
-    saldo_inicial: float
-
-class TransacaoModel(BaseModel):
-    valor: float
-
-class TransferenciaModel(BaseModel):
-    conta_origem: int
-    conta_destino: int
-    valor: float
-
-def get_usuario_by_email(email: str):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM usuarios WHERE email = ?", (email,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return row
-    return None
-
-def get_conta_by_numero(numero: int):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM contas WHERE numero = ?", (numero,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return row
-    return None
-
-def create_usuario(usuario: UsuarioModel):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)", 
-                   (usuario.nome, usuario.email, usuario.senha))
-    conn.commit()
-    conn.close()
-
-def create_conta(conta: ContaModel):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    usuario = get_usuario_by_email(conta.email)
+@app.get("/usuarios/{id}")
+async def buscar_usuario(id: int):
+    usuario = Usuario.buscar_usuario(id)
     if usuario:
-        cursor.execute("INSERT INTO contas (usuario_id, saldo) VALUES (?, ?)",
-                       (usuario[0], conta.saldo_inicial))
-        conn.commit()
-        conn.close()
-        return cursor.lastrowid
-    conn.close()
-    return None
+        return usuario
+    raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-def depositar_conta(numero: int, valor: float):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE contas SET saldo = saldo + ? WHERE numero = ?", 
-                   (valor, numero))
-    conn.commit()
-    conn.close()
+@app.put("/usuarios/{id}")
+async def atualizar_usuario(id: int, nome: str, cpf: str, email: str, senha: str):
+    Usuario.atualizar_usuario(id, nome, cpf, email, senha)
+    return {"status": "Usuário atualizado com sucesso"}
 
-def sacar_conta(numero: int, valor: float):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE contas SET saldo = saldo - ? WHERE numero = ?", 
-                   (valor, numero))
-    conn.commit()
-    conn.close()
+@app.delete("/usuarios/{id}")
+async def deletar_usuario(id: int):
+    Usuario.deletar_usuario(id)
+    return {"status": "Usuário deletado com sucesso"}
 
-def transferir_conta(conta_origem: int, conta_destino: int, valor: float):
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE contas SET saldo = saldo - ? WHERE numero = ?", 
-                   (valor, conta_origem))
-    cursor.execute("UPDATE contas SET saldo = saldo + ? WHERE numero = ?", 
-                   (valor, conta_destino))
-    conn.commit()
-    conn.close()
-
-@app.post("/usuarios")
-def criar_usuario(usuario: UsuarioModel):
+@app.post("/contas/")
+async def criar_conta(usuario_id: int, saldo: float, tipo: int):
     try:
-        create_usuario(usuario)
-        return {"mensagem": "Usuário criado com sucesso!"}
-    except Exception as e:
+        ContaBancaria.criar_conta(usuario_id, saldo, tipo)
+        return {"status": "Conta criada com sucesso"}
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/contas")
-def criar_conta(conta: ContaModel):
-    conta_id = create_conta(conta)
-    if conta_id:
-        return {"mensagem": "Conta criada com sucesso!", "numero_conta": conta_id}
-    else:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-
-@app.get("/contas/{numero}")
-def obter_conta(numero: int):
-    conta = get_conta_by_numero(numero)
+@app.get("/contas/{id}")
+async def buscar_conta(id: int):
+    conta = ContaBancaria.buscar_conta(id)
     if conta:
-        return {
-            "numero": conta[0],
-            "usuario_id": conta[1],
-            "saldo": conta[2],
-        }
-    else:
-        raise HTTPException(status_code=404, detail="Conta não encontrada")
-
-@app.post("/contas/{numero}/depositar")
-def depositar(numero: int, transacao: TransacaoModel):
-    conta = get_conta_by_numero(numero)
-    if conta:
-        depositar_conta(numero, transacao.valor)
-        return {"mensagem": "Depósito realizado com sucesso!"}
-    else:
-        raise HTTPException(status_code=404, detail="Conta não encontrada")
-
-@app.post("/contas/{numero}/sacar")
-def sacar(numero: int, transacao: TransacaoModel):
-    conta = get_conta_by_numero(numero)
-    if conta:
-        sacar_conta(numero, transacao.valor)
-        return {"mensagem": "Saque realizado com sucesso!"}
-    else:
-        raise HTTPException(status_code=404, detail="Conta não encontrada")
-
-@app.post("/contas/transferir")
-def realizar_transferencia(transferencia: TransferenciaModel):
-    conta_origem = get_conta_by_numero(transferencia.conta_origem)
-    conta_destino = get_conta_by_numero(transferencia.conta_destino)
-    if conta_origem and conta_destino:
-        transferir_conta(transferencia.conta_origem, transferencia.conta_destino, transferencia.valor)
-        return {"mensagem": "Transferência realizada com sucesso!"}
-    else:
-        raise HTTPException(status_code=404, detail="Conta de origem ou destino não encontrada")
-
-@app.put("/usuarios/{email}")
-def atualizar_usuario(email: str, usuario: UsuarioModel):
-    try:
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("UPDATE usuarios SET nome = ?, senha = ? WHERE email = ?", 
-                       (usuario.nome, usuario.senha, email))
-        conn.commit()
-        conn.close()
-        return {"mensagem": "Usuário atualizado com sucesso!"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.put("/contas/{numero}")
-def atualizar_conta(numero: int, conta: ContaModel):
-    try:
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        usuario = get_usuario_by_email(conta.email)
-        if usuario:
-            cursor.execute("UPDATE contas SET usuario_id = ?, saldo = ? WHERE numero = ?", 
-                           (usuario[0], conta.saldo_inicial, numero))
-            conn.commit()
-            conn.close()
-            return {"mensagem": "Conta atualizada com sucesso!"}
-        else:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.delete("/usuarios/{email}")
-def deletar_usuario(email: str):
-    try:
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM usuarios WHERE email = ?", (email,))
-        conn.commit()
-        conn.close()
-        return {"mensagem": "Usuário deletado com sucesso!"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.delete("/contas/{numero}")
-def deletar_conta(numero: int):
-    try:
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM contas WHERE numero = ?", (numero,))
-        conn.commit()
-        conn.close()
-        return {"mensagem": "Conta deletada com sucesso!"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.get("/usuarios")
-def listar_usuarios():
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT nome, email FROM usuarios")
-    usuarios = cursor.fetchall()
-    conn.close()
-    return [{"nome": usuario[0], "email": usuario[1]} for usuario in usuarios]
-
-@app.get("/contas")
-def listar_contas():
-    conn = database.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT numero, usuario_id, saldo FROM contas")
-    contas = cursor.fetchall()
-    conn.close()
-    return [{"numero": conta[0], "usuario_id": conta[1], "saldo": conta[2]} for conta in contas]
-
-
+        return conta
+    raise HTTPException(status_code=404, detail="Conta não encontrada")
 
 @app.get("/cotacaoDolar")
 def listar_dolar():
@@ -235,3 +60,16 @@ def listar_dolar():
         }
     else:
         return {"erro": "Falha ao consultar a cotação do dólar"}
+
+@app.post("/transferencias/")
+async def realizar_transferencia(conta_origem_id: int, conta_destino_id: int, valor: float):
+    try:
+        Transferencia.realizar_transferencia(conta_origem_id, conta_destino_id, valor)
+        return {"status": "Transferência realizada com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+if __name__ == "__main__":
+    inicializar_bd()
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
