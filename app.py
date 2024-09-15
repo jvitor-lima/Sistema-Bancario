@@ -79,6 +79,12 @@ async def realizar_transferencia(conta_origem_id: int, conta_destino_id: int, va
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.get("/transferencias/")
+async def listar_transferencias(conta_origem_id: int = None, conta_destino_id: int = None):
+    transferencias = Transferencia.listar_transferencias(conta_origem_id, conta_destino_id)
+    return {"transferencias": transferencias}
+
+
 if __name__ == "__main__":
     inicializar_bd()
     import uvicorn

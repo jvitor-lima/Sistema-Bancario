@@ -36,3 +36,36 @@ class Transferencia:
             conn.commit()
         finally:
             conn.close()
+    
+    @staticmethod
+    def listar_transferencias(conta_origem_id: int = None, conta_destino_id: int = None):
+        conn = get_connection()
+        cursor = conn.cursor()
+        try:
+            query = "SELECT * FROM transferencias WHERE 1=1"
+            params = []
+
+            if conta_origem_id is not None:
+                query += " AND conta_origem_id = ?"
+                params.append(conta_origem_id)
+            
+            if conta_destino_id is not None:
+                query += " AND conta_destino_id = ?"
+                params.append(conta_destino_id)
+            
+            cursor.execute(query, params)
+            transferencias = cursor.fetchall()
+            
+            result = []
+            for transferencia in transferencias:
+                result.append({
+                    "id": transferencia[0],
+                    "conta_origem_id": transferencia[1],
+                    "conta_destino_id": transferencia[2],
+                    "valor": transferencia[3],
+                    "data": transferencia[4]
+                })
+            
+            return result
+        finally:
+            conn.close()
