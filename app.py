@@ -45,6 +45,16 @@ async def buscar_conta(id: int):
         return conta
     raise HTTPException(status_code=404, detail="Conta não encontrada")
 
+
+@app.delete("/contas/{id}/encerrar")
+async def encerrar_conta(id: int):
+    try:
+        ContaBancaria.encerrar_conta(id)
+        return {"status": "Conta encerrada com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    
 @app.get("/cotacaoDolar")
 def listar_dolar():
     response = requests.get(dolar)

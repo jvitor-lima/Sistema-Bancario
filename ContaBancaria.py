@@ -71,12 +71,22 @@ class ContaBancaria:
         finally:
             conn.close()
 
+
     @staticmethod
-    def deletar_conta(id: int):
+    def encerrar_conta(id: int):
         conn = get_connection()
         cursor = conn.cursor()
         try:
-            cursor.execute("DELETE FROM contas WHERE id = ?", (id,))
+            cursor.execute("SELECT saldo FROM contas WHERE usuario_id = ?", (id,))
+            saldo = cursor.fetchone()
+            
+            if saldo is None:
+                raise ValueError("Conta não encontrada.")
+
+            if saldo[0] > 0.0:
+                raise ValueError("A conta não pode ser encerrada enquanto tiver saldo.")
+            
+            cursor.execute("DELETE FROM contas WHERE usuario_id = ?", (id,))
             conn.commit()
         finally:
             conn.close()
