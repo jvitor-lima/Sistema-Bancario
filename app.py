@@ -46,6 +46,14 @@ async def buscar_conta(id: int):
     raise HTTPException(status_code=404, detail="Conta não encontrada")
 
 
+@app.get("/usuarios/{usuario_id}/contas")
+async def listar_contas_por_usuario(usuario_id: int):
+    contas = ContaBancaria.listar_contas_por_usuario(usuario_id)
+    if not contas:
+        raise HTTPException(status_code=404, detail="Nenhuma conta encontrada para este usuário.")
+    return {"contas": contas}
+
+
 @app.delete("/contas/{id}/encerrar")
 async def encerrar_conta(id: int):
     try:

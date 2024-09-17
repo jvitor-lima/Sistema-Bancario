@@ -73,6 +73,26 @@ class ContaBancaria:
 
 
     @staticmethod
+    def listar_contas_por_usuario(usuario_id: int):
+        conn = get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT * FROM contas WHERE usuario_id = ?", (usuario_id,))
+            contas = cursor.fetchall()
+            
+            result = []
+            for conta in contas:
+                result.append({
+                    "id": conta[0],
+                    "usuario_id": conta[1],
+                    "saldo": conta[2],
+                    "tipo": conta[3]
+                })
+            
+            return result
+        finally:
+            conn.close()
+    @staticmethod
     def encerrar_conta(id: int):
         conn = get_connection()
         cursor = conn.cursor()
